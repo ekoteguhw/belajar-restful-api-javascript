@@ -13,5 +13,11 @@ module.exports = {
     lastName: Joi.string().required(),
     userName: Joi.string().required(),
   },
+  signIn: {
+    userName: Joi.string().required(),
+    password: Joi.string()
+      .regex(regExp)
+      .required(),
+  },
   passwordRegExp: regExp,
 };

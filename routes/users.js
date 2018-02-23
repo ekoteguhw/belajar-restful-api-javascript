@@ -10,4 +10,10 @@ router.post(
   usersController.signUp,
 );
 
+router.post(
+  '/sign_in',
+  validate(usersValidation.signIn),
+  usersController.signIn,
+);
+
 module.exports = router;
