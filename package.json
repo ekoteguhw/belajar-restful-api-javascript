@@ -8,11 +8,25 @@
     "dev": "node_modules/.bin/nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["restful", "api", "nodejs", "express", "mongodb"],
+  "keywords": [
+    "restful",
+    "api",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
   "author": "Eko Teguh Widodo",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.2",
+    "dotenv": "^5.0.0",
     "express": "^4.16.2",
+    "helmet": "^3.11.0",
+    "mongoose": "^5.0.6"
+  },
+  "devDependencies": {
+    "morgan": "^1.9.0",
     "nodemon": "^1.15.1"
   }
 }
