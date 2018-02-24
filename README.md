@@ -23,6 +23,11 @@ Belajar restful api dengan teknologi Javascript NODEJS, EXPRESS, dan MONGODB
 * morgan
 * nodemon
 * bcrypt
+* http-status
+* jsonwebtoken
+* passport
+* passport-local
+* passport-jwt
 
 ### API routes
 
@@ -30,3 +35,5 @@ Belajar restful api dengan teknologi Javascript NODEJS, EXPRESS, dan MONGODB
   * [POST] /users/sign_up
   * [POST] /users/sign_in
 * /posts
+  * [POST] /posts/create
+  * [GET] /posts
