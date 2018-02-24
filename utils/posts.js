@@ -2,18 +2,21 @@ const Joi = require('joi');
 
 module.exports = {
   createPost: {
-    title: Joi.string().required(),
-    slug: Joi.string().required(),
-    content: Joi.string(),
-    userName: Joi.string().required(),
+    body: {
+      title: Joi.string()
+        .min(3)
+        .required(),
+      slug: Joi.string().required(),
+      content: Joi.string().min(10),
+    },
   },
   updatePost: {
-    title: Joi.string().required(),
-    slug: Joi.string().required(),
-    content: Joi.string(),
-    userName: Joi.string().required(),
+    body: {
+      title: Joi.string()
+        .min(3)
+        .required(),
+      slug: Joi.string().required(),
+      content: Joi.string().min(10),
+    },
   },
-  deletePost: {},
-  getPost: {},
-  getPosts: {},
 };

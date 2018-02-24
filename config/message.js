@@ -15,4 +15,6 @@ module.exports = {
   ERROR_EMAIL: 'Incorrect email!',
   SUCCESSFUL_LOGIN: 'Sign In successfully!',
   ERROR_NOTACCESSIBLE: 'You do not have access to this resource!',
+  LENGTH_TITLE: 'Title need to be longer!',
+  LENGTH_CONTENT: 'Text need to be longer!',
 };

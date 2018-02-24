@@ -28,6 +28,8 @@ Belajar restful api dengan teknologi Javascript NODEJS, EXPRESS, dan MONGODB
 * passport
 * passport-local
 * passport-jwt
+* mongoose-unique-validator
+* slug
 
 ### API routes
 
@@ -36,4 +38,8 @@ Belajar restful api dengan teknologi Javascript NODEJS, EXPRESS, dan MONGODB
   * [POST] /users/sign_in
 * /posts
   * [POST] /posts/create
+  * [PATCH] /posts/:id
+  * [DELETE] /posts/:id
   * [GET] /posts
+  * [GET] /posts/:id
+  * [POST] /posts/:id/favorite

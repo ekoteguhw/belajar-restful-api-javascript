@@ -3,61 +3,62 @@ const Schema = mongoose.Schema;
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const Jwt = require('jsonwebtoken');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const { passwordRegExp } = require('../utils/users');
+const Post = require('../models/posts');
 const Message = require('../config/message');
 const DURATION = 60 * 60;
 const config = require('../config/index');
 
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: [true, Message.REQUIRED_EMAIL],
-    trim: true,
-    validate: {
-      validator(email) {
-        return validator.isEmail(email);
+const UserSchema = new Schema(
+  {
+    email: {
+      type: String,
+      unique: true,
+      required: [true, Message.REQUIRED_EMAIL],
+      trim: true,
+      validate: {
+        validator(email) {
+          return validator.isEmail(email);
+        },
+        message: `{VALUE} ${Message.VALID_CUSTOM} email!`,
       },
-      message: `{VALUE} ${Message.VALID_CUSTOM} email!`,
+    },
+    firstName: {
+      type: String,
+      required: [true, Message.REQUIRED_FIRSTNAME],
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: [true, Message.REQUIRED_LASTNAME],
+      trim: true,
+    },
+    userName: {
+      type: String,
+      required: [true, Message.REQUIRED_USERNAME],
+      trim: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, Message.REQUIRED_PASSWORD],
+      trim: true,
+      minlength: [6, Message.LENGTH_PASSWORD],
+      validate: {
+        validator(password) {
+          return passwordRegExp.test(password);
+        },
+        message: `{VALUE} ${Message.VALID_CUSTOM} password!`,
+      },
     },
   },
-  firstName: {
-    type: String,
-    required: [true, Message.REQUIRED_FIRSTNAME],
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    required: [true, Message.REQUIRED_LASTNAME],
-    trim: true,
-  },
-  userName: {
-    type: String,
-    required: [true, Message.REQUIRED_USERNAME],
-    trim: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, Message.REQUIRED_PASSWORD],
-    trim: true,
-    minlength: [6, Message.LENGTH_PASSWORD],
-    validate: {
-      validator(password) {
-        return passwordRegExp.test(password);
-      },
-      message: `{VALUE} ${Message.VALID_CUSTOM} password!`,
-    },
-  },
-  createdAt: {
-    type: Date,
-    default: new Date(),
-  },
-  updatedAt: {
-    type: Date,
-    default: new Date(),
-  },
+  { timestamps: true },
+);
+
+UserSchema.plugin(uniqueValidator, {
+  message: '{VALUE} already taken!',
 });
 
 UserSchema.pre('save', function(next) {
@@ -102,6 +103,26 @@ UserSchema.methods = {
     return Jwt.sign({ _id: this._id }, config.JWT_SECRET, {
       expiresIn: DURATION,
     });
+  },
+  _favorites: {
+    async posts(postId) {
+      if (this.favorites.posts.indexOf(postId) >= 0) {
+        this.favorites.posts.remove(postId);
+        await Post.decFavoriteCount(postId);
+      } else {
+        this.favorites.posts.push(postId);
+        await Post.incFavoriteCount(postId);
+      }
+
+      return this.save();
+    },
+    isPostIsFavorite(postId) {
+      if (this.favorites.posts.indexOf(postId) >= 0) {
+        return true;
+      }
+
+      return false;
+    },
   },
 };
 

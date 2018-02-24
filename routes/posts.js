@@ -7,38 +7,22 @@ const postsValidation = require('../utils/posts');
 const { authJwt } = require('../services/isAuthenticated');
 
 router.post(
-  '/create',
+  '/',
   authJwt,
   validate(postsValidation.createPost),
   postsController.createPost,
 );
 
-router.post(
-  '/update',
+router.patch(
+  '/:id',
   authJwt,
   validate(postsValidation.updatePost),
   postsController.updatePost,
 );
 
-router.post(
-  '/delete',
-  authJwt,
-  validate(postsValidation.deletePost),
-  postsController.deletePost,
-);
-
-router.get(
-  '/get/:slug',
-  authJwt,
-  validate(postsValidation.getPost),
-  postsController.getPost,
-);
-
-router.get(
-  '/',
-  authJwt,
-  validate(postsValidation.getPosts),
-  postsController.getPosts,
-);
+router.delete('/:id', authJwt, postsController.deletePost);
+router.get('/:id', authJwt, postsController.getPostById);
+router.get('/', authJwt, postsController.getPostsList);
+router.post('/:id/favorite', authJwt, postsController.favoritePost);
 
 module.exports = router;
