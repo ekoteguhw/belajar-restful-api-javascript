@@ -7,9 +7,11 @@ const app = express();
 middleware(app);
 const index = require('./routes/index');
 const users = require('./routes/users');
+const posts = require('./routes/posts');
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/posts', posts);
 
 app.listen(config.PORT, err => {
   if (err) {

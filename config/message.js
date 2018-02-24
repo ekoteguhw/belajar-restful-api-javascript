@@ -8,4 +8,7 @@ module.exports = {
   VALID_CUSTOM: 'is not valid',
   ERROR_USEREXISTS: 'User already exists!',
   ERROR_USERNOTFOUND: 'User is not found!',
+  REQUIRED_TITLE: 'Title is required!',
+  REQUIRED_SLUG: 'Slug is required!',
+  ERROR_SAMETITLEORSLUG: 'Title or slug are same!',
 };
