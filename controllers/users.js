@@ -1,7 +1,6 @@
 const HTTPStatus = require('http-status');
 
 const User = require('../models/users');
-const { jwtSignUser, toAuthJSON } = require('../utils/users');
 const Message = require('../config/message');
 
 module.exports = {
@@ -17,10 +16,7 @@ module.exports = {
         } else {
           User.create(req.body, (err, user) => {
             if (err) throw err;
-            const userJson = user.toJSON();
-            res
-              .status(HTTPStatus.CREATED)
-              .json(toAuthJSON(userJson, jwtSignUser(userJson)));
+            res.status(HTTPStatus.CREATED).json(user.toAuthJSON());
           });
         }
       });
@@ -28,27 +24,8 @@ module.exports = {
       res.status(HTTPStatus.BAD_REQUEST).json(err);
     }
   },
-  async signIn(req, res) {
-    try {
-      const { userName, password } = req.body;
-      await User.findOne({ userName: userName }, (err, user) => {
-        if (err) throw err;
-        if (user) {
-          user.comparePassword(password, (err, isMatch) => {
-            if (err) throw err;
-            const userJson = user.toJSON();
-            res
-              .status(HTTPStatus.OK)
-              .json(toAuthJSON(userJson, jwtSignUser(userJson)));
-          });
-        } else {
-          res
-            .status(HTTPStatus.EXPECTATION_FAILED)
-            .json({ message: Message.ERROR_USERNOTFOUND });
-        }
-      });
-    } catch (err) {
-      res.status(HTTPStatus.BAD_REQUEST).json(err);
-    }
+  signIn(req, res, next) {
+    res.status(HTTPStatus.OK).json(req.user.toAuthJSON());
+    next();
   },
 };

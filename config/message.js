@@ -11,4 +11,8 @@ module.exports = {
   REQUIRED_TITLE: 'Title is required!',
   REQUIRED_SLUG: 'Slug is required!',
   ERROR_SAMETITLEORSLUG: 'Title or slug are same!',
+  ERROR_PASSWORD: 'Incorrect password!',
+  ERROR_EMAIL: 'Incorrect email!',
+  SUCCESSFUL_LOGIN: 'Sign In successfully!',
+  ERROR_NOTACCESSIBLE: 'You do not have access to this resource!',
 };

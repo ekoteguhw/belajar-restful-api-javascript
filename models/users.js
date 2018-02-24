@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const Jwt = require('jsonwebtoken');
 
 const { passwordRegExp } = require('../utils/users');
 const Message = require('../config/message');
+const DURATION = 60 * 60;
+const config = require('../config/index');
 
 const UserSchema = new Schema({
   email: {
@@ -47,6 +50,14 @@ const UserSchema = new Schema({
       message: `{VALUE} ${Message.VALID_CUSTOM} password!`,
     },
   },
+  createdAt: {
+    type: Date,
+    default: new Date(),
+  },
+  updatedAt: {
+    type: Date,
+    default: new Date(),
+  },
 });
 
 UserSchema.pre('save', function(next) {
@@ -67,11 +78,31 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
+UserSchema.methods = {
+  validPassword(password, cb) {
+    bcrypt.compare(password, this.password, function(err, isMatch) {
+      if (err) return cb(err, null);
+      return cb(null, isMatch);
+    });
+  },
+  toAuthJSON() {
+    return {
+      _id: this._id,
+      userName: this.userName,
+      token: this.jwtSignUser(),
+    };
+  },
+  toJSON() {
+    return {
+      _id: this._id,
+      userName: this.userName,
+    };
+  },
+  jwtSignUser() {
+    return Jwt.sign({ _id: this._id }, config.JWT_SECRET, {
+      expiresIn: DURATION,
+    });
+  },
 };
 
 module.exports = mongoose.model('User', UserSchema);

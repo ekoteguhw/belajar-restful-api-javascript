@@ -25,6 +25,14 @@ const PostSchema = new Schema({
     required: [true, Message.REQUIRED_USERNAME],
     trim: true,
   },
+  createdAt: {
+    type: Date,
+    default: new Date(),
+  },
+  updatedAt: {
+    type: Date,
+    default: new Date(),
+  },
 });
 
 module.exports = mongoose.model('Post', PostSchema);

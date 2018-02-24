@@ -3,6 +3,7 @@ const validate = require('express-validation');
 const router = express.Router();
 const usersController = require('../controllers/users');
 const usersValidation = require('../utils/users');
+const { authLocal } = require('../services/isAuthenticated');
 
 router.post(
   '/sign_up',
@@ -10,10 +11,6 @@ router.post(
   usersController.signUp,
 );
 
-router.post(
-  '/sign_in',
-  validate(usersValidation.signIn),
-  usersController.signIn,
-);
+router.post('/sign_in', authLocal, usersController.signIn);
 
 module.exports = router;
