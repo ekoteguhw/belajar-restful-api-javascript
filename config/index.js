@@ -1,5 +1,6 @@
 const devConfig = {
   DB_URL: process.env.DB_URL + '-dev',
+  JWT_SECRET: process.env.JWT_SECRET,
 };
 
 const tesConfig = {

@@ -2,49 +2,49 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-const SALT_FACTOR = 10;
 
 const { passwordRegExp } = require('../utils/users');
+const Message = require('../config/message');
 
 const UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: [true, 'Email is required!'],
+    required: [true, Message.REQUIRED_EMAIL],
     trim: true,
     validate: {
       validator(email) {
         return validator.isEmail(email);
       },
-      message: '{VALUE} is not a valid email!',
+      message: `{VALUE} ${Message.VALID_CUSTOM} email!`,
     },
   },
   firstName: {
     type: String,
-    required: [true, 'Firstname is required!'],
+    required: [true, Message.REQUIRED_FIRSTNAME],
     trim: true,
   },
   lastName: {
     type: String,
-    required: [true, 'Lastname is required!'],
+    required: [true, Message.REQUIRED_LASTNAME],
     trim: true,
   },
   userName: {
     type: String,
-    required: [true, 'Username is required!'],
+    required: [true, Message.REQUIRED_USERNAME],
     trim: true,
     unique: true,
   },
   password: {
     type: String,
-    required: [true, 'Password is required!'],
+    required: [true, Message.REQUIRED_PASSWORD],
     trim: true,
-    minlength: [6, 'Password need to be longer!'],
+    minlength: [6, Message.LENGTH_PASSWORD],
     validate: {
       validator(password) {
         return passwordRegExp.test(password);
       },
-      message: '{VALUE} is not a valid password!',
+      message: `{VALUE} ${Message.VALID_CUSTOM} password!`,
     },
   },
 });
@@ -55,7 +55,7 @@ UserSchema.pre('save', function(next) {
   if (!user.isModified('password')) return next();
 
   // generate a salt
-  bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
+  bcrypt.genSalt(parseInt(process.env.SALT_FACTOR), function(err, salt) {
     if (err) return next(err);
     // hash the password along with our new salt
     bcrypt.hash(user.password, salt, function(err, hash) {

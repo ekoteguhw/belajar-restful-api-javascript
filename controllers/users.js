@@ -1,4 +1,9 @@
+const HTTPStatus = require('http-status');
+
 const User = require('../models/users');
+const { jwtSignUser, toAuthJSON } = require('../utils/users');
+const Message = require('../config/message');
+
 module.exports = {
   async signUp(req, res) {
     try {
@@ -6,16 +11,21 @@ module.exports = {
       await User.findOne({ userName: userName, email: email }, (err, found) => {
         if (err) throw err;
         if (found) {
-          res.status(500).json({ message: 'User already exists!' });
+          res
+            .status(HTTPStatus.EXPECTATION_FAILED)
+            .json({ message: Message.ERROR_USEREXISTS });
         } else {
           User.create(req.body, (err, user) => {
             if (err) throw err;
-            res.status(201).json(user);
+            const userJson = user.toJSON();
+            res
+              .status(HTTPStatus.CREATED)
+              .json(toAuthJSON(userJson, jwtSignUser(userJson)));
           });
         }
       });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(HTTPStatus.BAD_REQUEST).json(err);
     }
   },
   async signIn(req, res) {
@@ -26,14 +36,19 @@ module.exports = {
         if (user) {
           user.comparePassword(password, (err, isMatch) => {
             if (err) throw err;
-            res.status(201).json(user);
+            const userJson = user.toJSON();
+            res
+              .status(HTTPStatus.OK)
+              .json(toAuthJSON(userJson, jwtSignUser(userJson)));
           });
         } else {
-          res.status(500).json({ message: 'User is not found!' });
+          res
+            .status(HTTPStatus.EXPECTATION_FAILED)
+            .json({ message: Message.ERROR_USERNOTFOUND });
         }
       });
     } catch (err) {
-      res.status(500).json(err);
+      res.status(HTTPStatus.BAD_REQUEST).json(err);
     }
   },
 };
